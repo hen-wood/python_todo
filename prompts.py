@@ -9,3 +9,4 @@ delete_prompt = "Enter the item number to delete: "
 # Errors
 unknown_error = "Error: Unknown command"
 not_found_error = "Error: Item not found"
+command_error = "Error: command must be followed by an action"

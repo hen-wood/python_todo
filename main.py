@@ -1,60 +1,70 @@
 from prompts import *
 
+
+def get_items():
+    with open('list_items.txt', 'r') as file:
+        list_items = file.readlines()
+    return list_items
+
+
+def write_items(list_items):
+    with open('list_items.txt', 'w') as file:
+        file.writelines(list_items)
+
+
 while True:
     user_action = input(action_prompt)
-    match user_action.lower():
-        case "cl":
-            print(command_list)
-        case "a":
-            item = input("Enter an item: ") + "\n"
+    command = user_action.split()[0].lower()
+    if command == 'exit':
+        break
+    elif command == 'cl':
+        print(command_list)
+    elif command == 's':
+        items = get_items()
 
-            file = open('list_items.txt', 'r')
-            items = file.readlines()
-            file.close()
+        for index, item in enumerate(items):
+            print(f"{index + 1}. {item}")
+    elif command not in "ased":
+        print(unknown_error)
+    elif len(user_action.split()) < 2:
+        print(command_error)
+    else:
+        user_input = ' '.join(user_action.split()[1].strip())
+        match user_action[0].lower():
+            case "a":
+                item = user_input + "\n"
 
-            items.append(item)
+                items = get_items()
 
-            file = open('list_items.txt', 'w')
-            file.writelines(items)
-            file.close()
-        case "s":
-            file = open('list_items.txt', 'r')
-            items = file.readlines()
-            file.close()
+                items.append(item)
 
-            for index, item in enumerate(items):
-                print(f"{index + 1}. {item}")
-        case "e":
-            index = int(input(edit_prompt)) - 1
+                write_items(items)
+            case "e":
+                index = int(user_input) - 1
 
-            file = open('list_items.txt', 'r')
-            items = file.readlines()
-            file.close()
+                items = get_items()
 
-            if 0 <= index < len(items):
-                item = items[index]
-                edited_item = input(f"Enter edit for {item}")
-                items[index] = edited_item + "\n"
-                file = open('list_items.txt', 'w')
-                file.writelines(items)
-                file.close()
-                print(f"Changed '{item[:-1]}' to '{edited_item}'")
-            else:
-                print(not_found_error)
-        case "d":
-            index = int(input(delete_prompt)) - 1
+                if 0 <= index < len(items):
+                    item = items[index]
+                    edited_item = input(f"Enter edit for {item}")
+                    items[index] = edited_item + "\n"
 
-            file = open('list_items.txt', 'r')
-            items = file.readlines()
-            file.close()
+                    write_items(items)
+                    print(f"Changed '{item[:-1]}' to '{edited_item}'")
+                else:
+                    print(not_found_error)
+            case "d":
+                index = int(user_input) - 1
 
-            if 0 <= index < len(items):
-                removed_item = items.pop(index)
-                file = open('list_items.txt', 'w')
-                file.writelines(items)
-                file.close()
-                print(f"Removed '{removed_item[:-1]}' from list")
-            else:
-                print(not_found_error)
-        case _:
-            print(unknown_error)
+                items = get_items()
+
+                if 0 <= index < len(items):
+                    removed_item = items.pop(index)
+
+                    write_items(items)
+
+                    print(f"Removed '{removed_item[:-1]}' from list")
+                else:
+                    print(not_found_error)
+            case _:
+                print(unknown_error)
